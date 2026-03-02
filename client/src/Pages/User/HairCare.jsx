@@ -86,7 +86,7 @@ const HairCare = () => {
         if (productsRes.status === "fulfilled") {
           const fetchedProducts = productsRes.value.data;
           const hairCareProducts = Array.isArray(fetchedProducts)
-            ? fetchedProducts.filter((p) => p.category?.name === "Hair Care")
+            ? fetchedProducts.filter((p) => p.category?.name === "Skin And Hair")
             : [];
           setProducts(hairCareProducts);
         }
