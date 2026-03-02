@@ -33,6 +33,8 @@ const ProductCardSkeleton = () => (
   </div>
 );
 
+import { transformCloudinaryUrl } from "../../utils/cloudinary";
+
 // Custom ProductCard component with Tailwind styles from BestSellingProduct.css
 const ProductCard = React.memo(({ product, inCart, isCartToggling, handleAddToCart }) => (
   <div
@@ -44,7 +46,7 @@ const ProductCard = React.memo(({ product, inCart, isCartToggling, handleAddToCa
         className="aspect-square bg-white flex items-center justify-center overflow-hidden"
       >
         <img
-          src={`${product.images?.[0]?.url || "/placeholder.png"}?w=260&format=webp`}
+          src={transformCloudinaryUrl(product.images?.[0]?.url, 260) || "/placeholder.png"}
           alt={product.name}
           className="w-full h-full object-contain p-2"
           loading="lazy"

@@ -86,7 +86,7 @@ const HairCare = () => {
         if (productsRes.status === "fulfilled") {
           const fetchedProducts = productsRes.value.data;
           const hairCareProducts = Array.isArray(fetchedProducts)
-            ? fetchedProducts.filter((p) => p.category?.name === "Skin And Hair")
+            ? fetchedProducts.filter((p) => p.category?.name?.toLowerCase() === "skin and hair")
             : [];
           setProducts(hairCareProducts);
         }
@@ -256,7 +256,7 @@ const HairCare = () => {
     return (
       <div className="px-4 py-10">
         <h1 className="text-center text-2xl font-bold mb-8 text-green-900">
-          Recommended Hair Care Solutions
+          Recommended Skin and Hair Solutions
         </h1>
         <Swiper
           modules={[Navigation]}
@@ -278,7 +278,7 @@ const HairCare = () => {
   if (!memoizedProducts.length) {
     return (
       <div className="text-center py-10 text-gray-500 text-lg">
-        No Hair Care Products Available
+        No Skin and Hair Products Available
       </div>
     );
   }
@@ -287,7 +287,7 @@ const HairCare = () => {
   return (
     <div className="px-4 py-10">
       <h2 className="text-center text-2xl font-bold mb-8 text-green-900">
-        Recommended Hair Care Solutions
+        Recommended Skin and Hair Solutions
       </h2>
 
       {/* KEY FORCES FULL REMOUNT AFTER CLIENT DETECTION */}

@@ -5,6 +5,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation, Autoplay } from "swiper/modules";
 import axios from "axios";
+import { transformCloudinaryUrl } from "../../utils/cloudinary";
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
@@ -28,7 +29,7 @@ const Categories = () => {
           id: cat._id,
           title: cat.name,       // assuming API has 'name'
           cat: cat.name,         // same for query param
-          image: cat.image?.url, // assuming API has 'image.url'
+          image: transformCloudinaryUrl(cat.image?.url, 320), // 320px for high quality on retina
         }));
         setCategories(mapped);
       } catch (error) {

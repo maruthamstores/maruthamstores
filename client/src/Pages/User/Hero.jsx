@@ -5,12 +5,9 @@ import { Link } from "react-router-dom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { PrevArrow, NextArrow } from "../../components/ui/Arrow";
+import { transformCloudinaryUrl } from "../../utils/cloudinary";
 
 const API_URL = import.meta.env.VITE_API_URL;
-
-// Transform image URL for optimization
-const transformImageUrl = (url, width) =>
-  url.replace("/upload/", `/upload/w_${width},q_auto,f_webp/`);
 
 const Hero = () => {
   // 1️⃣ Hardcode a first slide so user sees something immediately
@@ -34,7 +31,7 @@ const Hero = () => {
           .map((hero) => ({
             productId: hero.product?._id,
             productName: hero.product?.name || "Hero Slide",
-            image: transformImageUrl(hero.images?.[0]?.url, 800),
+            image: transformCloudinaryUrl(hero.images?.[0]?.url, 1200),
           }))
           .filter((slide) => slide.image);
 
@@ -71,30 +68,29 @@ const Hero = () => {
   return (
     <section className="w-full">
       <Slider {...settings}>
-  {slides.map((slide, index) => (
-    <div
-      key={index}
-      className="outline-none w-full flex flex-col items-center"
-    >
-      <Link
-        to={slide.productId === "default" ? "#" : `/productdetails/${slide.productId}`}
-        className="w-full"
-      >
-        {/* Replace <img> with wrapper div */}
-        <div className="w-full h-[200px] sm:h-[200px] md:h-[400px] lg:h-[410px] overflow-hidden rounded-lg">
-          <img
-            src={slide.image}
-            alt={slide.productName}
-            loading={index === 0 ? "eager" : "lazy"}
-            fetchpriority={index === 0 ? "high" : "auto"}
-            className="w-full h-full object-cover"
-          />
-        </div>
-      </Link>
-    </div>
-  ))}
-</Slider>
-
+        {slides.map((slide, index) => (
+          <div
+            key={index}
+            className="outline-none w-full flex flex-col items-center"
+          >
+            <Link
+              to={slide.productId === "default" ? "#" : `/productdetails/${slide.productId}`}
+              className="w-full"
+            >
+              {/* Replace <img> with wrapper div */}
+              <div className="w-full h-[200px] sm:h-[200px] md:h-[400px] lg:h-[410px] overflow-hidden rounded-lg">
+                <img
+                  src={slide.image}
+                  alt={slide.productName}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  fetchpriority={index === 0 ? "high" : "auto"}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </Link>
+          </div>
+        ))}
+      </Slider>
     </section>
   );
 };

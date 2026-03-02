@@ -8,6 +8,7 @@ import "toastify-js/src/toastify.css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode, Thumbs } from "swiper/modules";
 import { useParams, useNavigate } from "react-router-dom";
+import { transformCloudinaryUrl } from "../../utils/cloudinary";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -256,7 +257,7 @@ const ProductDetail = ({ currentUser }) => {
                 <SwiperSlide key={i}>
                   <div className="aspect-square bg-white flex items-center justify-center overflow-hidden border border-gray-100 rounded">
                     <img
-                      src={img.url}
+                      src={transformCloudinaryUrl(img.url, 800)}
                       alt={`${product.name} ${i}`}
                       className="w-full h-full object-contain p-4"
                     />
@@ -277,7 +278,7 @@ const ProductDetail = ({ currentUser }) => {
                 <SwiperSlide key={i}>
                   <div className="aspect-square bg-white flex items-center justify-center overflow-hidden border border-gray-200 rounded cursor-pointer">
                     <img
-                      src={img.url}
+                      src={transformCloudinaryUrl(img.url, 150)}
                       alt={`Thumb ${i}`}
                       className="w-full h-full object-contain p-1"
                     />

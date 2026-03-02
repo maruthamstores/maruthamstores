@@ -14,6 +14,7 @@ const EditProduct = () => {
   const [oldprice, setOldPrice] = useState("");
   const [newprice, setNewPrice] = useState("");
   const [stock, setStock] = useState("");
+  const [offerLine, setOfferLine] = useState("");
   const [bestsell, setBestsell] = useState(false);
   const [status, setStatus] = useState("Active");
   const [currentImages, setCurrentImages] = useState([]);
@@ -37,6 +38,7 @@ const EditProduct = () => {
         setNewPrice(product.new_price);
         setOldPrice(product.old_price);
         setStock(product.stock);
+        setOfferLine(product.offer_line || "");
         setBestsell(product.is_bestsell);
         setStatus(product.is_active ? "Active" : "Inactive");
         setCurrentImages(product.images.map(img => ({ url: img.url, public_id: img.public_id })));
@@ -88,6 +90,7 @@ const EditProduct = () => {
       formData.append("category", category);
       formData.append("new_price", newprice);
       formData.append("old_price", oldprice);
+      formData.append("offer_line", offerLine);
       formData.append("stock", stock);
       formData.append("is_bestsell", bestsell);
       formData.append("is_active", status === "Active");
@@ -180,6 +183,7 @@ const EditProduct = () => {
                 type="number"
                 value={oldprice}
                 onChange={(e) => setOldPrice(e.target.value)}
+                onWheel={(e) => e.target.blur()}
                 required
                 className="block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-base"
               />
@@ -190,6 +194,7 @@ const EditProduct = () => {
                 type="number"
                 value={newprice}
                 onChange={(e) => setNewPrice(e.target.value)}
+                onWheel={(e) => e.target.blur()}
                 required
                 className="block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-base"
               />
@@ -200,10 +205,23 @@ const EditProduct = () => {
                 type="number"
                 value={stock}
                 onChange={(e) => setStock(e.target.value)}
+                onWheel={(e) => e.target.blur()}
                 required
                 className="block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-base"
               />
             </div>
+          </div>
+
+          {/* Offer Line */}
+          <div>
+            <label className="block text-base font-medium text-gray-700 mb-2">Offer Line</label>
+            <input
+              type="text"
+              value={offerLine}
+              onChange={(e) => setOfferLine(e.target.value)}
+              className="block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-base"
+              placeholder="e.g. 10% Launch Offer"
+            />
           </div>
 
           {/* Bestsell & Status */}

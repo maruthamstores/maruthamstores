@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaHeart, FaRegHeart, FaShoppingCart } from "react-icons/fa";
+import { transformCloudinaryUrl } from "../../utils/cloudinary";
 
 const ProductCard = React.memo(
   ({ product, isWished, inCart, toggleWishlist, toggleCart }) => {
@@ -15,7 +16,7 @@ const ProductCard = React.memo(
         <Link to={`/productdetails/${product._id}`}>
           <div className="aspect-square bg-white flex items-center justify-center overflow-hidden">
             <img
-              src={product.images?.[0]?.url || "/placeholder.jpg"}
+              src={transformCloudinaryUrl(product.images?.[0]?.url, 400) || "/placeholder.jpg"}
               alt={product.name}
               className="w-full h-full object-contain p-2"
               loading="lazy"
@@ -25,7 +26,7 @@ const ProductCard = React.memo(
 
         <div className="p-3 sm:p-4">
           <span className="text-xs sm:text-sm text-gray-500 uppercase font-bold">
-            {product.category?.name || "Hair Care"}
+            {product.category?.name || "Skin And Hair"}
           </span>
           <h4 className="my-2 sm:my-3 text-sm sm:text-base">
             <Link

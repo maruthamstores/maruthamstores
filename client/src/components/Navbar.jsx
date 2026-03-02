@@ -38,6 +38,15 @@ const Navbar = () => {
     fetchData();
   }, []);
 
+  // Body scroll lock when menu is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+  }, [menuOpen]);
+
   // Close menu if clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {

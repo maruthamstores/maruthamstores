@@ -61,7 +61,7 @@ const ProductCard = React.memo(
           </h4>
           {product.offer_line && (
             <div className="text-green-600 font-semibold text-xs sm:text-sm mb-1 sm:mb-2 truncate">
-              {product.offer_line} Launch Offer
+              {product.offer_line} % Launch Offer
             </div>
           )}
           <p className="text-xs text-gray-600 mb-1 sm:mb-2 line-clamp-2">
