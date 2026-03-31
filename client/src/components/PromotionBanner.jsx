@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 
 const PromotionBanner = ({ image, link = "/product", alt = "Promotion Banner" }) => {
   return (
-    <div className="w-full px-2 sm:px-4 md:px-8 lg:px-16 py-4 md:py-12 bg-white">
+    <div className="w-full px-2 sm:px-4 md:px-8 lg:px-16 py-4 md:py-12">
       <Link to={link} className="block group">
-        <div className="relative w-full aspect-[21/9] md:aspect-[4/1] overflow-hidden  shadow-lg border border-gray-100">
-          <img 
-            src={image} 
+        <div className="relative w-full aspect-[4/1] overflow-hidden  shadow-lg border border-gray-100">
+          <img
+            src={image}
             alt={alt}
             className="w-full h-full object-cover transition-transform duration-700"
             loading="lazy"

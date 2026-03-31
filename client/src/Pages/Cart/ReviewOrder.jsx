@@ -24,13 +24,11 @@ const ReviewOrder = () => {
   const hasFetched = useRef(false);
 
   const calculateShipping = (state, subtotal) => {
-    const nearbyStates = ["Kerala", "Karnataka", "Andhra Pradesh", "Telangana", "Puducherry"];
-    if (!state) return 200;
-    if (state.toLowerCase() === "tamil nadu") return subtotal < 500 ? 50 : 0;
-    else if (nearbyStates.some(s => s.toLowerCase() === state.toLowerCase())) return 150;
-    return 200;
+    if (!state) return 140;
+    if (state.toLowerCase() === "tamil nadu") return subtotal < 1000 ? 70 : 0;
+    return 140;
   };
-
+ 
   useEffect(() => {
     if (hasFetched.current) return;
     hasFetched.current = true;

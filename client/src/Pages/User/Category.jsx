@@ -40,7 +40,7 @@ const Categories = () => {
   }, [API_URL]);
 
   return (
-    <div className="px-4 md:px-8 lg:px-16 py-12 bg-white">
+    <div className="px-4 md:px-8 lg:px-16 py-12">
       <div className="text-center mb-10">
         <h1 className="text-[#2e5939] text-3xl md:text-4xl font-[times] font-bold leading-[1.08] mb-3 capitalize">
           All Categories

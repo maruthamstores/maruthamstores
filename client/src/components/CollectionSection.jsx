@@ -132,7 +132,7 @@ const CollectionSection = ({ title, subtext, categoryName, isBestseller = false 
 
   if (loading) {
     return (
-      <div ref={sectionRef} className="px-4 md:px-8 lg:px-16 py-10 md:py-16 bg-white border-b border-[#f0e4d4]">
+      <div ref={sectionRef} className="px-4 md:px-8 lg:px-16 py-10 md:py-16 border-b border-[#f0e4d4]">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 md:mb-10 gap-4">
           <div>
             <h2 className="text-[#2e5939] text-2xl sm:text-3xl md:text-5xl font-serif font-bold tracking-tight mb-2">
@@ -170,7 +170,7 @@ const CollectionSection = ({ title, subtext, categoryName, isBestseller = false 
   if (products.length === 0) return null;
 
   return (
-    <div ref={sectionRef} className="px-4 md:px-8 lg:px-16 py-10 md:py-16 bg-white border-b border-[#f0e4d4]">
+    <div ref={sectionRef} className="px-4 md:px-8 lg:px-16 py-10 md:py-16 border-b border-[#f0e4d4]">
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 md:mb-10 gap-4">
         <div>
           <h2 className="text-[#2e5939] text-2xl sm:text-3xl md:text-5xl font-serif font-bold tracking-tight mb-2">
@@ -180,8 +180,8 @@ const CollectionSection = ({ title, subtext, categoryName, isBestseller = false 
             {subtext}
           </p>
         </div>
-        <Link 
-          to={categoryName ? `/product?category=${categoryName}` : "/product"} 
+        <Link
+          to={categoryName ? `/product?category=${categoryName}` : "/product"}
           className="w-fit self-end text-[#2e5939] font-serif font-bold border-b-2 border-[#d4af37] pb-1 hover:text-[#d4af37] transition-colors"
         >
           View All Collection
