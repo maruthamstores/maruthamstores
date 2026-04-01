@@ -9,19 +9,21 @@ const BestSellingProduct = lazy(() => import("./BestSellingProduct"));
 const ReviewList = lazy(() => import("./ReviewList"));
 
 const Home = () => {
-  const bgUrl = `${import.meta.env.BASE_URL}project_bg.png`;
+  const bgUrl = `${import.meta.env.BASE_URL}random_scattered_pattern_v2_1775006580763.png`;
 
   return (
     <>
       <div className="relative p-0 m-0 overflow-hidden bg-[#f9fbf9]">
-        {/* Subtle Background Pattern */}
+        {/* Scattered Background Pattern - Framed Edges Only */}
         <div
-          className="absolute inset-0 z-0 pointer-events-none opacity-[0.5]"
+          className="absolute inset-0 z-0 pointer-events-none opacity-[0.6]"
           style={{
             backgroundImage: `url('${bgUrl}')`,
             backgroundRepeat: 'repeat',
-            backgroundSize: '1000px',
-            backgroundPosition: '150px 100px'
+            backgroundSize: '1000px', // Scaled up to make objects nice and large
+            // This CSS mask fades the pattern out completely in the center, leaving it only on the edges
+            maskImage: 'radial-gradient(ellipse at center, transparent 30%, black 85%)',
+            WebkitMaskImage: 'radial-gradient(ellipse at center, transparent 30%, black 85%)',
           }}
         />
         <div className="relative z-10">
