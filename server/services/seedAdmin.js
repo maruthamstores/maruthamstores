@@ -1,13 +1,13 @@
+require("dotenv").config({ path: __dirname + '/../.env' });
 const mongoose = require("mongoose");
 const Admin = require("../models/Admin");
 const connectDB = require("../config/db");
-require("dotenv").config();
 
 const seedAdmin = async () => {
     try {
         await connectDB();
 
-        const adminEmail = "admin@maruthamstores.com";
+        const adminEmail = "MARUTHAMSTORES";
         const existingAdmin = await Admin.findOne({ email: adminEmail });
 
         if (existingAdmin) {
@@ -17,7 +17,7 @@ const seedAdmin = async () => {
 
         const newAdmin = new Admin({
             email: adminEmail,
-            password: "adminpassword123", // Replace this with a secure password if needed
+            password: "marutham@2026", // Replace this with a secure password if needed
             name: "Main Admin",
             role: "superadmin"
         });
