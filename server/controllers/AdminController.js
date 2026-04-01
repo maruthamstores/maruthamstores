@@ -1,4 +1,4 @@
- const Admin = require("../models/Admin");
+  const Admin = require("../models/Admin");
 const jwt = require("jsonwebtoken");
 const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET || "supersecretadmin";
 
@@ -9,6 +9,12 @@ const loginAdmin = async (req, res) => {
     // ✅ Input validation
     if (!email || !password) {
       return res.status(400).json({ message: "Email and password required" });
+    }
+
+    // ✅ Strict exact-case check for the Admin Username from seedAdmin.js
+    // Mongoose transforms it to lowercase automatically, so we enforce exact case matching manually here before querying.
+    if (email !== "MARUTHAMSTORES") {
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
     const user = await Admin.findOne({ email });
