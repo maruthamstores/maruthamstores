@@ -104,7 +104,7 @@ const Navbar = () => {
 
       <div className="navbar" ref={menuRef}>
         <Link to="/" className="logo" onClick={() => setMenuOpen(false)}>
-          <img src="/logo.png" alt="M" className="logo-img" /> 
+          <img src="/loginlogo.jpeg" alt="M" className="logo-img" /> 
         </Link>
 
         <div className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
@@ -112,6 +112,9 @@ const Navbar = () => {
         </div>
 
         <div className={`nav-links ${menuOpen ? "active" : ""}`}>
+          <div className="mobile-only-logo">
+            <img src="/loginlogo.jpeg" alt="Marutham Stores" />
+          </div>
           {/* Category Dropdown */}
           <div
             className="dropdown nav-link"

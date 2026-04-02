@@ -75,9 +75,14 @@
 }
 
 .logo img {
-  width: auto;
-  height: 80px;
+  width: 160px;
+  height: auto;
+  max-height: 80px;
   object-fit: contain;
+}
+
+.mobile-only-logo {
+  display: none;
 }
 
 /* Nav links */
@@ -229,7 +234,7 @@
     width: 100%;
     height: 100vh;
     background: #fff;
-    padding: 80px 20px 20px;
+    padding: 130px 20px 20px;
     z-index: 250;
     overflow-y: auto;
     overflow-x: hidden;
@@ -246,6 +251,21 @@
 
   .search-box {
     display: none;
+  }
+
+  .mobile-only-logo {
+    display: block;
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .mobile-only-logo img {
+    width: 220px;
+    height: auto;
+    max-height: 100px;
+    object-fit: contain;
   }
 
   .logo {
