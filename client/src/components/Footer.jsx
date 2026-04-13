@@ -64,12 +64,16 @@ const Footer = () => {
           <h3 className="text-base md:text-lg font-semibold text-white mb-1 md:mb-3">Customer Service</h3>
           <ul className="space-y-1 md:space-y-2 text-xs md:text-sm">
             <li><a href="#">Wishlist</a></li>
-            <li><a href="mailto:maruthamstores24@gmail.com" className="text-white font-medium">Order Tracking</a></li>
-            <li className="mt-1 flex items-center gap-2 text-xs md:text-sm">
-              <FaEnvelope className="text-[#d19a74]" /> maruthamstores24@gmail.com
+            <li><a href="mailto:Maruthamstoresinternational@gmail.com" className="text-white font-medium">Order Tracking</a></li>
+               <li className="mt-1 flex items-center gap-2 text-xs md:text-sm">
+              <FaEnvelope className="text-[#d19a74]" /> Maruthamstoresindia@gmail.com
             </li>
             <li className="mt-1 flex items-center gap-2 text-xs md:text-sm">
-              <FaPhoneAlt className="text-[#d19a74]" /> +91 97505 30288
+              <FaEnvelope className="text-[#d19a74]" /> Maruthamstoresinternational@gmail.com
+            </li>
+         
+            <li className="mt-1 flex items-center gap-2 text-xs md:text-sm">
+              <FaPhoneAlt className="text-[#d19a74]" /> 9150015901
             </li>
           </ul>
         </div>

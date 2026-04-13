@@ -52,9 +52,9 @@ export const QuickActions = () => {
             label="Logout"
             onClick={handleLogout} // call logout on click
           />
-          <Link to="/help">
+          {/* <Link to="/help">
             <QuickActionItem icon={<HelpCircle size={22} color="green" />} label="Help Center" />
-          </Link>
+          </Link> */}
         </div>
       </div>
     </div>

@@ -21,48 +21,26 @@ const About = () => {
             <h1 className="font-serif text-3xl sm:text-4xl text-yellow-700 uppercase tracking-[3px] text-center mb-10">
               Welcome to MARUTHAM STORES
             </h1>
-            <p className="text-center font-bold mb-5">
-              Your Destination for Natural Beauty and Wellness
-            </p>
 
             <p className="mb-5">
-              Founded on <strong>24th August 2023</strong>, Marutham Stores began its
-              journey in <em>Kuruppanaickenpalayam, Bhavani-Erode</em>, and later
-              moved to <em>Chithode, Erode</em>, with a simple yet powerful mission:
-              to provide affordable, high-quality, natural beauty products that
-              promote healthy living and holistic self-care.
-            </p>
+             Our brand name, “MARUTHAM,” is derived from Marutham Thinai, which represents paddy fields and agricultural landscapes. We are committed to sourcing and promoting products from farmers, women entrepreneurs, and self-help groups.
 
-            <p className="mb-5">
-              Our flagship product, <strong>Natural Hair Oil</strong>, marked the
-              beginning of our offline sales journey, supported by proper
-              documentation including <strong>MSME</strong> and{" "}
-              <strong>FSSAI</strong> registrations.
-            </p>
-
-            <p className="mb-5">
-              For one year, we focused exclusively on offline retail, building trust
-              with our customers through genuine products and personalized service.
-              In our second year, we embraced the power of digital, launching our
-              online store and sharing educational and engaging videos that quickly
-              gained attention and allowed us to expand our product range.
+   Our primary vision is to deliver high-quality products to consumers by connecting them with genuine and dedicated producers. We strive to support and build a self-sustaining farming system, encourage a self-reliant lifestyle, and contribute towards creating a self-sufficient India
             </p>
 
             <h2 className="font-serif text-xl sm:text-2xl text-gray-600 uppercase tracking-wider mt-8 mb-4">
               → Our Products
             </h2>
             <ul className="list-disc list-outside ml-5 mb-5">
-              <li>15 varieties of Organic Soaps</li>
+              <li>Varieties of Snack items</li>
               <li>Natural Hair Oil</li>
-              <li>Herbal Shampoos</li>
-              <li>2 types of Face Wash</li>
-              <li>2 types of Lip Balm</li>
-              <li>Sunscreen</li>
+              <li>Fabrics</li>
+              <li>Pickle items</li>
               <li>...and more coming soon!</li>
             </ul>
             <p className="mb-5">
               Every product is made with carefully selected natural ingredients, free
-              from harsh chemicals, and designed to nourish your skin and hair the
+              from harsh chemicals,
               way nature intended.
             </p>
 
@@ -85,8 +63,8 @@ const About = () => {
             </h2>
             <ul className="list-disc list-outside ml-5 mb-5">
               <li>
-                To become the world's most trusted and loved natural skincare and
-                cosmetics brand, rooted in Marutham Stores values
+                To become the world's most trusted and loved natural Food and
+                Fabric brand, rooted in Marutham Stores values
               </li>
               <li>To deliver the best quality at the best price</li>
               <li>To open multiple hubs and stores across India and beyond</li>
@@ -144,9 +122,7 @@ const About = () => {
             <h6 className="font-sans text-2xl sm:text-3xl text-yellow-700 font-bold text-center mt-8 mb-2">
               NATURE MARUTHAM STORES
             </h6>
-            <p className="text-center text-base text-green-900 italic mb-8">
-              Embracing Natural Beauty, Inspired by Culture
-            </p>
+           
           </div>
 
           {/* Footer Image */}
@@ -176,7 +152,7 @@ const About = () => {
                 className="w-full h-auto"
               />
             </Link>
-            <Link
+            <Link 
               to="/category"
               className="w-full sm:w-[295px]"
             >
