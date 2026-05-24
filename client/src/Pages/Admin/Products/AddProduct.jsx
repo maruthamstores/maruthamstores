@@ -67,7 +67,6 @@ const AddProduct = () => {
       images.forEach((image) => formData.append("images", image));
 
       const res = await axios.post(`${API_URL}/api/products`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
 

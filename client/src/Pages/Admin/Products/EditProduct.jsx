@@ -105,7 +105,6 @@ const EditProduct = () => {
       newImages.forEach(file => formData.append("images", file));
 
       await axios.put(`${API_URL}/api/products/${id}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
 

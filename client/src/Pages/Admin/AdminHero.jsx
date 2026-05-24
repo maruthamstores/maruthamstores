@@ -77,12 +77,10 @@ const EditHeroSection = () => {
     try {
       if (hero._id) {
         await axios.put(`${API_URL}/api/hero/${hero._id}`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
           withCredentials: true,
         });
       } else {
         await axios.post(`${API_URL}/api/hero`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
           withCredentials: true,
         });
       }
