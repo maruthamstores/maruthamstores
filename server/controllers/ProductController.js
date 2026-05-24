@@ -36,6 +36,10 @@ const createProduct = async (req, res, next) => {
       is_bestsell: req.body.is_bestsell === "true" || req.body.is_bestsell === true,
     };
 
+    if (productData.old_price === "" || productData.old_price === "null" || productData.old_price === "undefined") delete productData.old_price;
+    if (productData.new_price === "" || productData.new_price === "null" || productData.new_price === "undefined") delete productData.new_price;
+    if (productData.stock === "" || productData.stock === "null" || productData.stock === "undefined") delete productData.stock;
+
     const product = await productService.createProduct(productData, files);
     res.status(201).json(product);
   } catch (error) {
@@ -81,6 +85,10 @@ const updateProduct = async (req, res, next) => {
     };
 
     if (categoryId) productData.category = categoryId;
+
+    if (productData.old_price === "" || productData.old_price === "null" || productData.old_price === "undefined") delete productData.old_price;
+    if (productData.new_price === "" || productData.new_price === "null" || productData.new_price === "undefined") delete productData.new_price;
+    if (productData.stock === "" || productData.stock === "null" || productData.stock === "undefined") delete productData.stock;
 
     const product = await productService.updateProduct(req.params.id, productData, files);
     if (!product) {
