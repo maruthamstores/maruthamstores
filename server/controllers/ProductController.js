@@ -39,6 +39,8 @@ const createProduct = async (req, res, next) => {
     if (productData.old_price === "" || productData.old_price === "null" || productData.old_price === "undefined") delete productData.old_price;
     if (productData.new_price === "" || productData.new_price === "null" || productData.new_price === "undefined") delete productData.new_price;
     if (productData.stock === "" || productData.stock === "null" || productData.stock === "undefined") delete productData.stock;
+    if (productData.description === "undefined" || productData.description === "null") productData.description = "";
+    if (productData.offer_line === "undefined" || productData.offer_line === "null") productData.offer_line = "";
 
     const product = await productService.createProduct(productData, files);
     res.status(201).json(product);
@@ -89,6 +91,8 @@ const updateProduct = async (req, res, next) => {
     if (productData.old_price === "" || productData.old_price === "null" || productData.old_price === "undefined") delete productData.old_price;
     if (productData.new_price === "" || productData.new_price === "null" || productData.new_price === "undefined") delete productData.new_price;
     if (productData.stock === "" || productData.stock === "null" || productData.stock === "undefined") delete productData.stock;
+    if (productData.description === "undefined" || productData.description === "null") productData.description = "";
+    if (productData.offer_line === "undefined" || productData.offer_line === "null") productData.offer_line = "";
 
     const product = await productService.updateProduct(req.params.id, productData, files);
     if (!product) {
