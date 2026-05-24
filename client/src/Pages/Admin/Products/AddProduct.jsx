@@ -87,7 +87,8 @@ const AddProduct = () => {
       setIsBestsell(false);
     } catch (err) {
       console.error(err);
-      setError("Failed to add product. Please try again.");
+      const msg = err?.response?.data?.message || err?.response?.data?.error || "Failed to add product. Please try again.";
+      setError(msg);
     } finally {
       setIsSubmitting(false);
     }

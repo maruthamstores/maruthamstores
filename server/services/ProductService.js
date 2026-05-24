@@ -38,27 +38,22 @@ const createProduct = async (data, files = []) => {
 // Update product by ID
 const updateProduct = async (id, data, files = []) => {
   try {
-    // Convert old images (from frontend) to proper objects
-    let currentImages = [];
-    if (data.currentImages && data.currentImages.length > 0) {
-      currentImages = data.currentImages.map(img =>
-        typeof img === "string"
-          ? { url: img, public_id: null }
-          : img
-      );
-    }
+    // currentImages are already parsed {url, public_id} objects from controller
+    let mergedImages = Array.isArray(data.currentImages) ? [...data.currentImages] : [];
 
-    // Upload new files
+    // Upload any new files to Cloudinary and append
     if (files && files.length > 0) {
       const uploadedFiles = await uploadMultipleFiles(files);
-      const newImages = formatMultipleResponse(uploadedFiles); // [{url, public_id}]
-      currentImages = [...currentImages, ...newImages];
+      const newImages = formatMultipleResponse(uploadedFiles);
+      mergedImages = [...mergedImages, ...newImages];
     }
 
-    data.images = currentImages;
+    // Build the update payload — remove the raw `currentImages` field
+    const { currentImages, ...updateFields } = data;
+    updateFields.images = mergedImages;
 
-    // Update product
-    return await Product.findByIdAndUpdate(id, data, { new: true });
+    // Update product in DB
+    return await Product.findByIdAndUpdate(id, updateFields, { new: true, runValidators: true });
   } catch (error) {
     throw new Error("Failed to update product: " + error.message);
   }

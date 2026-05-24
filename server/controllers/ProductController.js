@@ -1,4 +1,5 @@
 const productService = require('../services/ProductService');
+const mongoose = require("mongoose");
 
 // GET /api/products
 const getProducts = async (req, res, next) => {
@@ -11,24 +12,28 @@ const getProducts = async (req, res, next) => {
 };
 
 // POST /api/products
-const mongoose = require("mongoose");
-
 const createProduct = async (req, res, next) => {
   try {
     const files = req.files || (req.file ? [req.file] : []);
 
-    // Convert category string to ObjectId
-    let categoryId;
-    if (req.body.category && req.body.category !== "") {
-categoryId = new mongoose.Types.ObjectId(req.body.category);
-
-    } else {
+    // Validate category
+    if (!req.body.category || req.body.category === "") {
       return res.status(400).json({ message: "Category is required" });
     }
 
+    // Convert category string to ObjectId
+    let categoryId;
+    try {
+      categoryId = new mongoose.Types.ObjectId(req.body.category);
+    } catch (e) {
+      return res.status(400).json({ message: "Invalid category ID" });
+    }
+
+    // Convert string booleans from FormData to actual booleans
     const productData = {
       ...req.body,
       category: categoryId,
+      is_bestsell: req.body.is_bestsell === "true" || req.body.is_bestsell === true,
     };
 
     const product = await productService.createProduct(productData, files);
@@ -38,9 +43,7 @@ categoryId = new mongoose.Types.ObjectId(req.body.category);
   }
 };
 
-
-
-// Update Product Controller
+// PUT /api/products/:id
 const updateProduct = async (req, res, next) => {
   try {
     const files = req.files || (req.file ? [req.file] : []);
@@ -49,17 +52,40 @@ const updateProduct = async (req, res, next) => {
     // Parse currentImages JSON if sent as strings
     let parsedCurrentImages = [];
     if (currentImages) {
-      parsedCurrentImages = Array.isArray(currentImages)
-        ? currentImages.map(img => typeof img === 'string' ? JSON.parse(img) : img)
-        : [JSON.parse(currentImages)];
+      const rawArr = Array.isArray(currentImages) ? currentImages : [currentImages];
+      parsedCurrentImages = rawArr.map(img => {
+        const parsed = typeof img === 'string' ? JSON.parse(img) : img;
+        return {
+          url: parsed.url,
+          public_id: parsed.public_id || parsed.url, // fallback so schema required field is satisfied
+        };
+      });
     }
 
+    // Convert category to ObjectId if provided
+    let categoryId;
+    if (req.body.category && req.body.category !== "") {
+      try {
+        categoryId = new mongoose.Types.ObjectId(req.body.category);
+      } catch (e) {
+        return res.status(400).json({ message: "Invalid category ID" });
+      }
+    }
+
+    // Convert string booleans from FormData to actual booleans
     const productData = {
       ...req.body,
       currentImages: parsedCurrentImages,
+      is_bestsell: req.body.is_bestsell === "true" || req.body.is_bestsell === true,
+      is_active: req.body.is_active === "true" || req.body.is_active === true,
     };
 
+    if (categoryId) productData.category = categoryId;
+
     const product = await productService.updateProduct(req.params.id, productData, files);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
     res.json(product);
   } catch (error) {
     next(error);
