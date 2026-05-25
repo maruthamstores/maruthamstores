@@ -1,102 +1,98 @@
 const Product = require("../models/product");
 const {
-  uploadSingleFile,
   uploadMultipleFiles,
-  formatSingleResponse,
   formatMultipleResponse,
   deleteFile,
 } = require("../services/UploadService");
 
-// Get all products
+// ─── Get all products ────────────────────────────────────────────────────────
 const getProducts = async () => {
-  try {
-    return await Product.find().populate("category").sort({ createdAt: -1 });
-  } catch (error) {
-    throw new Error("Failed to fetch products: " + error.message);
-  }
+  return await Product.find().populate("category").sort({ createdAt: -1 });
 };
 
-// Create a product
+// ─── Get product by ID ───────────────────────────────────────────────────────
+const getProductById = async (id) => {
+  return await Product.findById(id).populate("category");
+};
+
+// ─── Create a product ────────────────────────────────────────────────────────
 const createProduct = async (data, files = []) => {
-  try {
-    let imagePaths = [];
+  let imagePaths = [];
 
-    // Upload files to Cloudinary
-    if (files.length > 0) {
-      const uploadedFiles = await uploadMultipleFiles(files);
-      imagePaths = formatMultipleResponse(uploadedFiles);
-    }
-
-    const product = new Product({ ...data, images: imagePaths });
-    return await product.save();
-  } catch (error) {
-    throw new Error("Failed to create product: " + error.message);
+  // Upload new files to Cloudinary
+  if (files.length > 0) {
+    const uploadedFiles = await uploadMultipleFiles(files, "products");
+    imagePaths = formatMultipleResponse(uploadedFiles);
   }
+
+  const product = new Product({ ...data, images: imagePaths });
+  return await product.save();
 };
 
-
-// Update product by ID
+// ─── Update product by ID ────────────────────────────────────────────────────
 const updateProduct = async (id, data, files = []) => {
-  try {
-    // currentImages are already parsed {url, public_id} objects from controller
-    let mergedImages = Array.isArray(data.currentImages) ? [...data.currentImages] : [];
+  // Fetch existing product to compute which images were removed
+  const existingProduct = await Product.findById(id);
+  if (!existingProduct) return null;
 
-    // Upload any new files to Cloudinary and append
-    if (files && files.length > 0) {
-      const uploadedFiles = await uploadMultipleFiles(files);
-      const newImages = formatMultipleResponse(uploadedFiles);
-      mergedImages = [...mergedImages, ...newImages];
-    }
+  // currentImages are already parsed {url, public_id} objects from controller
+  const keptImages = Array.isArray(data.currentImages) ? data.currentImages : [];
 
-    // Build the update payload — remove the raw `currentImages` field
-    const { currentImages, ...updateFields } = data;
-    updateFields.images = mergedImages;
-
-    // Update product in DB
-    return await Product.findByIdAndUpdate(id, updateFields, { new: true, runValidators: true });
-  } catch (error) {
-    throw new Error("Failed to update product: " + error.message);
-  }
-};
-
-// Optional: delete old image from Cloudinary
-const removeOldImage = async (public_id) => {
-  if (!public_id) return;
-  await deleteFile(public_id);
-};
-
-
-
-
-// Delete product by ID
-const deleteProduct = async (id) => {
-  try {
-    const product = await Product.findById(id);
-    if (product && product.images) {
-      // Delete all associated images from Cloudinary
-      for (const img of product.images) {
+  // Delete images from Cloudinary that were removed by the admin
+  const removedImages = existingProduct.images.filter(
+    (img) => !keptImages.some((kept) => kept.url === img.url)
+  );
+  for (const img of removedImages) {
+    if (img.public_id) {
+      try {
         await deleteFile(img.public_id);
+      } catch (err) {
+        console.warn(`Failed to delete image from Cloudinary: ${img.public_id}`, err.message);
+        // Do not crash — just warn. The DB update should still proceed.
       }
     }
-    return await Product.findByIdAndDelete(id);
-  } catch (error) {
-    throw new Error("Failed to delete product: " + error.message);
   }
+
+  // Upload any new image files to Cloudinary
+  let newUploadedImages = [];
+  if (files && files.length > 0) {
+    const uploadedFiles = await uploadMultipleFiles(files, "products");
+    newUploadedImages = formatMultipleResponse(uploadedFiles);
+  }
+
+  // Merge kept images with newly uploaded images
+  const mergedImages = [...keptImages, ...newUploadedImages];
+
+  // Build the update payload — strip out raw `currentImages` field
+  const { currentImages, ...updateFields } = data;
+  updateFields.images = mergedImages;
+
+  return await Product.findByIdAndUpdate(id, updateFields, { new: true, runValidators: true });
 };
-// Get single product by ID
-const getProductById = async (id) => {
-  try {
-    return await Product.findById(id).populate("category");
-  } catch (error) {
-    throw new Error("Failed to fetch product: " + error.message);
+
+// ─── Delete product by ID ────────────────────────────────────────────────────
+const deleteProduct = async (id) => {
+  const product = await Product.findById(id);
+  if (!product) throw new Error("Product not found");
+
+  // Delete all associated images from Cloudinary
+  for (const img of product.images) {
+    if (img.public_id) {
+      try {
+        await deleteFile(img.public_id);
+      } catch (err) {
+        console.warn(`Failed to delete image from Cloudinary: ${img.public_id}`, err.message);
+      }
+    }
   }
+
+  return await Product.findByIdAndDelete(id);
 };
 
 module.exports = {
   getProducts,
+  getProductById,
   createProduct,
   updateProduct,
   deleteProduct,
-  getProductById,
-  removeOldImage // add here
 };
