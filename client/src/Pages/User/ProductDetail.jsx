@@ -26,6 +26,50 @@ const ProductDetail = ({ currentUser }) => {
   const [loading, setLoading] = useState(true);
   const [inCart, setInCart] = useState(false);
 
+  const showLoginCartToast = () => {
+    const toastNode = document.createElement("div");
+    toastNode.className = "flex flex-col gap-2 text-sm";
+
+    const message = document.createElement("span");
+    message.textContent = "You're not logged in. Can't manage cart. Login now?";
+
+    const actions = document.createElement("div");
+    actions.className = "flex justify-center gap-2";
+
+    const yesButton = document.createElement("button");
+    yesButton.textContent = "Yes";
+    yesButton.className = "rounded bg-white px-3 py-1 font-semibold text-red-600";
+
+    const noButton = document.createElement("button");
+    noButton.textContent = "No";
+    noButton.className = "rounded border border-white px-3 py-1 font-semibold text-white";
+
+    actions.appendChild(yesButton);
+    actions.appendChild(noButton);
+    toastNode.appendChild(message);
+    toastNode.appendChild(actions);
+
+    const toast = Toastify({
+      node: toastNode,
+      duration: -1,
+      gravity: "top",
+      position: "center",
+      backgroundColor: "#dc2626",
+      close: false,
+    });
+
+    yesButton.onclick = () => {
+      toast.hideToast();
+      navigate("/login");
+    };
+
+    noButton.onclick = () => {
+      toast.hideToast();
+    };
+
+    toast.showToast();
+  };
+
   // Fetch product & reviews
   useEffect(() => {
     const fetchProduct = async () => {
@@ -84,13 +128,19 @@ const ProductDetail = ({ currentUser }) => {
         backgroundColor: "#16a34a",
       }).showToast();
     } catch (error) {
-      Toastify({
-        text: "Failed to add product to cart",
-        duration: 2000,
-        gravity: "bottom",
-        position: "center",
-        backgroundColor: "#dc2626",
-      }).showToast();
+      const isNotLoggedIn = error.response?.status === 401;
+
+      if (isNotLoggedIn) {
+        showLoginCartToast();
+      } else {
+        Toastify({
+          text: "Failed to add product to cart",
+          duration: 2000,
+          gravity: "bottom",
+          position: "center",
+          backgroundColor: "#dc2626",
+        }).showToast();
+      }
     }
   };
 
@@ -155,7 +205,7 @@ const ProductDetail = ({ currentUser }) => {
           }
         }
       });
-    } catch (err) {
+    } catch {
       Toastify({
         text: "Please login to buy products",
         duration: 2000,
