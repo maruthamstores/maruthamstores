@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
@@ -94,12 +94,57 @@ const ProductCard = React.memo(({ product, inCart, isCartToggling, handleAddToCa
 ));
 
 const BestSellingProduct = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState([]);
   const [cartToggling, setCartToggling] = useState({});
+
+  const showLoginCartToast = useCallback(() => {
+    const toastNode = document.createElement("div");
+    toastNode.className = "flex flex-col gap-2 text-sm";
+
+    const message = document.createElement("span");
+    message.textContent = "You're not logged in. Can't manage cart. Login now?";
+
+    const actions = document.createElement("div");
+    actions.className = "flex justify-center gap-2";
+
+    const yesButton = document.createElement("button");
+    yesButton.textContent = "Yes";
+    yesButton.className = "rounded bg-white px-3 py-1 font-semibold text-red-600";
+
+    const noButton = document.createElement("button");
+    noButton.textContent = "No";
+    noButton.className = "rounded border border-white px-3 py-1 font-semibold text-white";
+
+    actions.appendChild(yesButton);
+    actions.appendChild(noButton);
+    toastNode.appendChild(message);
+    toastNode.appendChild(actions);
+
+    const toast = Toastify({
+      node: toastNode,
+      duration: -1,
+      gravity: "top",
+      position: "center",
+      backgroundColor: "#dc2626",
+      close: false,
+    });
+
+    yesButton.onclick = () => {
+      toast.hideToast();
+      navigate("/login");
+    };
+
+    noButton.onclick = () => {
+      toast.hideToast();
+    };
+
+    toast.showToast();
+  }, [navigate]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -218,19 +263,23 @@ const BestSellingProduct = () => {
       } catch (err) {
         console.error("Error adding to cart:", err);
         setCart(cart); // Revert optimistic update
-        Toastify({
-          text: "Please login to manage cart",
-          duration: 2000,
-          gravity: "bottom",
-          position: "center",
-          backgroundColor: "#dc2626",
-          className: "toastify-mobile",
-        }).showToast();
+        if (err.response?.status === 401) {
+          showLoginCartToast();
+        } else {
+          Toastify({
+            text: "Failed to add product to cart",
+            duration: 2000,
+            gravity: "bottom",
+            position: "center",
+            backgroundColor: "#dc2626",
+            className: "toastify-mobile",
+          }).showToast();
+        }
       } finally {
         setCartToggling((prev) => ({ ...prev, [productId]: false }));
       }
     }, 300),
-    [cart, products]
+    [cart, products, showLoginCartToast]
   );
 
   // Memoize filtered products

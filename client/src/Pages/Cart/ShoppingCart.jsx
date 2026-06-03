@@ -42,7 +42,7 @@ const Cart = () => {
             duration: 2000,
             gravity: "bottom",
             position: "center",
-            backgroundColor: "#facc15",
+            backgroundColor: "#16a34a",
           }).showToast();
           navigate("/login");
         } else {

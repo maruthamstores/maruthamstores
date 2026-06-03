@@ -7,6 +7,20 @@ const getCartQuery = (user, sessionID) => {
   throw new Error("No user or session found");
 };
 
+const removeDeletedProducts = async (cart) => {
+  if (!cart) return cart;
+
+  const originalLength = cart.items.length;
+  cart.items = cart.items.filter((item) => item.product);
+
+  if (cart.items.length !== originalLength) {
+    await cart.save();
+    await cart.populate("items.product");
+  }
+
+  return cart;
+};
+
 // 🛒 Get or create cart
 async function getOrCreateCart(user, sessionID) {
   const query = getCartQuery(user, sessionID);
@@ -15,7 +29,7 @@ async function getOrCreateCart(user, sessionID) {
     cart = await Cart.create({ ...query, items: [] });
     await cart.populate("items.product");
   }
-  return cart;
+  return removeDeletedProducts(cart);
 }
 
 // ➕ Add item to cart
@@ -39,7 +53,7 @@ async function addToCart(user, sessionID, productId, quantity = 1) {
 
   await cart.save();
   await cart.populate("items.product");
-  return cart;
+  return removeDeletedProducts(cart);
 }
 
 // ✏️ Update item quantity
@@ -55,7 +69,7 @@ async function updateCartItem(user, sessionID, productId, quantity) {
   item.quantity = quantity;
   await cart.save();
   await cart.populate("items.product");
-  return cart;
+  return removeDeletedProducts(cart);
 }
 
 // ❌ Remove item
@@ -68,7 +82,7 @@ async function removeFromCart(user, sessionID, productId) {
   cart.items = cart.items.filter((i) => i.product.toString() !== productId);
   await cart.save();
   await cart.populate("items.product");
-  return cart;
+  return removeDeletedProducts(cart);
 }
 
 // 🗑️ Clear cart

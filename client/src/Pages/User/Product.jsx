@@ -136,6 +136,50 @@ const Product = () => {
   const [loading, setLoading] = useState(true);
   const [toggling, setToggling] = useState({ wishlist: {}, cart: {} });
 
+  const showLoginPromptToast = useCallback((type = "cart") => {
+    const toastNode = document.createElement("div");
+    toastNode.className = "flex flex-col gap-2 text-sm";
+
+    const message = document.createElement("span");
+    message.textContent = `You're not logged in. Can't manage ${type}. Login now?`;
+
+    const actions = document.createElement("div");
+    actions.className = "flex justify-center gap-2";
+
+    const yesButton = document.createElement("button");
+    yesButton.textContent = "Yes";
+    yesButton.className = "rounded bg-white px-3 py-1 font-semibold text-red-600";
+
+    const noButton = document.createElement("button");
+    noButton.textContent = "No";
+    noButton.className = "rounded border border-white px-3 py-1 font-semibold text-white";
+
+    actions.appendChild(yesButton);
+    actions.appendChild(noButton);
+    toastNode.appendChild(message);
+    toastNode.appendChild(actions);
+
+    const toast = Toastify({
+      node: toastNode,
+      duration: -1,
+      gravity: "top",
+      position: "center",
+      backgroundColor: "#dc2626",
+      close: false,
+    });
+
+    yesButton.onclick = () => {
+      toast.hideToast();
+      navigate("/login");
+    };
+
+    noButton.onclick = () => {
+      toast.hideToast();
+    };
+
+    toast.showToast();
+  }, [navigate]);
+
   useEffect(() => {
     const controller = new AbortController();
     const fetchData = async () => {
@@ -223,16 +267,20 @@ const Product = () => {
             className: "toastify-mobile",
           }).showToast();
         }
-      } catch {
+      } catch (err) {
         setWishlist(wishlist);
-        Toastify({
-          text: "Please login to manage wishlist",
-          duration: 1200,
-          gravity: "bottom",
-          position: "center",
-          backgroundColor: "#dc2626",
-          className: "toastify-mobile",
-        }).showToast();
+        if (err.response?.status === 401) {
+          showLoginPromptToast("wishlist");
+        } else {
+          Toastify({
+            text: "Failed to manage wishlist",
+            duration: 1200,
+            gravity: "bottom",
+            position: "center",
+            backgroundColor: "#dc2626",
+            className: "toastify-mobile",
+          }).showToast();
+        }
       } finally {
         setToggling((prev) => ({
           ...prev,
@@ -240,7 +288,7 @@ const Product = () => {
         }));
       }
     }, 200),
-    [wishlist]
+    [wishlist, showLoginPromptToast]
   );
 
   const toggleCart = useCallback(
@@ -296,16 +344,20 @@ const Product = () => {
             className: "toastify-mobile",
           }).showToast();
         }
-      } catch {
+      } catch (err) {
         setCart(cart);
-        Toastify({
-          text: "Please login to manage cart",
-          duration: 1200,
-          gravity: "bottom",
-          position: "center",
-          backgroundColor: "#dc2626",
-          className: "toastify-mobile",
-        }).showToast();
+        if (err.response?.status === 401) {
+          showLoginPromptToast("cart");
+        } else {
+          Toastify({
+            text: "Failed to manage cart",
+            duration: 1200,
+            gravity: "bottom",
+            position: "center",
+            backgroundColor: "#dc2626",
+            className: "toastify-mobile",
+          }).showToast();
+        }
       } finally {
         setToggling((prev) => ({
           ...prev,
@@ -313,7 +365,7 @@ const Product = () => {
         }));
       }
     }, 200),
-    [cart, products]
+    [cart, products, showLoginPromptToast]
   );
 
   const handleBuyNow = useCallback(

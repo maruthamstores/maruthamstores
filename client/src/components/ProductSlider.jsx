@@ -3,18 +3,20 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+const getProduct = (item) =>
+  item?.product && typeof item.product === "object" ? item.product : null;
+
 export const ProductSlider = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const API_URL = import.meta.env.VITE_API_URL;
-
   useEffect(() => {
     const fetchCart = async () => {
       try {
         const res = await axios.get(`${API_URL}/api/cart`, { withCredentials: true });
         if (res.data && Array.isArray(res.data.items)) {
-          setCartItems(res.data.items);
+          setCartItems(res.data.items.filter((item) => getProduct(item)));
         } else {
           setCartItems([]);
         }
@@ -42,7 +44,10 @@ export const ProductSlider = () => {
   }
 
   const totalPrice = cartItems.reduce(
-    (total, item) => total + (item.product?.new_price || item.product?.price) * item.quantity,
+    (total, item) => {
+      const product = getProduct(item);
+      return total + (product.new_price || product.price || 0) * item.quantity;
+    },
     0
   );
 
@@ -73,15 +78,21 @@ export const ProductSlider = () => {
           <div className="flex overflow-x-auto gap-6 pb-4 scrollbar-hide object-contain">
             {displayedItems.map((item, index) =>
               item ? (
-                <ProductCard
-                  key={item._id}
-                  image={item.product?.images?.[0]?.url || "/placeholder.png"}
-                  title={item.product?.name}
-                  price={item.product?.new_price || item.product?.price}
-                  originalPrice={item.product?.old_price || item.product?.price}
-                  discount={item.product?.offer_line?.replace("%", "") || 0}
-                  imgClass="h-30 w-40 object-fit" // fixed size
-                />
+                (() => {
+                  const product = getProduct(item);
+
+                  return (
+                    <ProductCard
+                      key={item._id}
+                      image={product.images?.[0]?.url || "/placeholder.png"}
+                      title={product.name}
+                      price={product.new_price || product.price}
+                      originalPrice={product.old_price || product.price}
+                      discount={product.offer_line?.replace("%", "") || 0}
+                      imgClass="h-30 w-40 object-fit" // fixed size
+                    />
+                  );
+                })()
               ) : (
                 <div key={`empty-${index}`} className="w-48 h-48 flex-shrink-0"></div>
               )

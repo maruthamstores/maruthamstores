@@ -16,6 +16,50 @@ const OffersPage = () => {
   const [loading, setLoading] = useState(true);
   const [heroImage, setHeroImage] = useState("/placeholder.jpg");
 
+  const showLoginPromptToast = (type = "wishlist") => {
+    const toastNode = document.createElement("div");
+    toastNode.className = "flex flex-col gap-2 text-sm";
+
+    const message = document.createElement("span");
+    message.textContent = `You're not logged in. Can't manage ${type}. Login now?`;
+
+    const actions = document.createElement("div");
+    actions.className = "flex justify-center gap-2";
+
+    const yesButton = document.createElement("button");
+    yesButton.textContent = "Yes";
+    yesButton.className = "rounded bg-white px-3 py-1 font-semibold text-red-600";
+
+    const noButton = document.createElement("button");
+    noButton.textContent = "No";
+    noButton.className = "rounded border border-white px-3 py-1 font-semibold text-white";
+
+    actions.appendChild(yesButton);
+    actions.appendChild(noButton);
+    toastNode.appendChild(message);
+    toastNode.appendChild(actions);
+
+    const toast = Toastify({
+      node: toastNode,
+      duration: -1,
+      gravity: "bottom",
+      position: "center",
+      backgroundColor: "#dc2626",
+      close: false,
+    });
+
+    yesButton.onclick = () => {
+      toast.hideToast();
+      navigate("/login");
+    };
+
+    noButton.onclick = () => {
+      toast.hideToast();
+    };
+
+    toast.showToast();
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -65,8 +109,18 @@ const OffersPage = () => {
         await axios.post(`${API_URL}/api/wishlist`, { productId }, { withCredentials: true });
         setWishlist((prev) => [...prev, productId]);
       }
-    } catch {
-      alert("Please login to manage wishlist");
+    } catch (err) {
+      if (err.response?.status === 401) {
+        showLoginPromptToast("wishlist");
+      } else {
+        Toastify({
+          text: "Failed to manage wishlist",
+          duration: 2000,
+          gravity: "bottom",
+          position: "center",
+          backgroundColor: "#dc2626",
+        }).showToast();
+      }
     }
   };
 
@@ -105,8 +159,18 @@ const OffersPage = () => {
           backgroundColor: "#16a34a",
         }).showToast();
       }
-    } catch {
-      alert("Please login to manage cart");
+    } catch (err) {
+      if (err.response?.status === 401) {
+        showLoginPromptToast("cart");
+      } else {
+        Toastify({
+          text: "Failed to manage cart",
+          duration: 2000,
+          gravity: "bottom",
+          position: "center",
+          backgroundColor: "#dc2626",
+        }).showToast();
+      }
     }
   };
 

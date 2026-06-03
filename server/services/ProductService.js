@@ -1,4 +1,5 @@
 const Product = require("../models/product");
+const Cart = require("../models/cart");
 const {
   uploadMultipleFiles,
   formatMultipleResponse,
@@ -86,7 +87,13 @@ const deleteProduct = async (id) => {
     }
   }
 
-  return await Product.findByIdAndDelete(id);
+  const deletedProduct = await Product.findByIdAndDelete(id);
+  await Cart.updateMany(
+    { "items.product": id },
+    { $pull: { items: { product: id } } }
+  );
+
+  return deletedProduct;
 };
 
 module.exports = {

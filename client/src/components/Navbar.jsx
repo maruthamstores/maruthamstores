@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import Toastify from "toastify-js";
 import "./Navbar.css";
+import "toastify-js/src/toastify.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -15,6 +17,72 @@ const Navbar = () => {
   const [offerLine, setOfferLine] = useState("");
   const menuRef = useRef();
   const navigate = useNavigate();
+
+  const showLoginPromptToast = useCallback((type) => {
+    const toastNode = document.createElement("div");
+    toastNode.className = "flex flex-col gap-2 text-sm";
+
+    const message = document.createElement("span");
+    message.textContent = `You're not logged in. Can't view ${type}. Login now?`;
+
+    const actions = document.createElement("div");
+    actions.className = "flex justify-center gap-2";
+
+    const yesButton = document.createElement("button");
+    yesButton.textContent = "Yes";
+    yesButton.className = "rounded bg-white px-3 py-1 font-semibold text-green-700";
+
+    const noButton = document.createElement("button");
+    noButton.textContent = "No";
+    noButton.className = "rounded border border-white px-3 py-1 font-semibold text-white";
+
+    actions.appendChild(yesButton);
+    actions.appendChild(noButton);
+    toastNode.appendChild(message);
+    toastNode.appendChild(actions);
+
+    const toast = Toastify({
+      node: toastNode,
+      duration: -1,
+      gravity: "top",
+      position: "center",
+      backgroundColor: "#16a34a",
+      close: false,
+    });
+
+    yesButton.onclick = () => {
+      toast.hideToast();
+      navigate("/login");
+    };
+
+    noButton.onclick = () => {
+      toast.hideToast();
+    };
+
+    toast.showToast();
+  }, [navigate]);
+
+  const handleProtectedNav = useCallback(async (event, path, type) => {
+    event.preventDefault();
+    setMenuOpen(false);
+
+    try {
+      await axios.get(`${API_URL}/api/user`, { withCredentials: true });
+      navigate(path);
+    } catch (err) {
+      if (err.response?.status === 401) {
+        showLoginPromptToast(type);
+      } else {
+        Toastify({
+          text: `Unable to open ${type}`,
+          duration: 2000,
+          gravity: "bottom",
+          position: "center",
+          backgroundColor: "#16a34a",
+        }).showToast();
+      }
+    }
+  }, [navigate, showLoginPromptToast]);
 
   // Fetch all products, categories, and offers
   useEffect(() => {
@@ -187,11 +255,11 @@ const Navbar = () => {
           <Link
             to="/profile"
             className="profile-icon"
-            onClick={() => setMenuOpen(false)}
+            onClick={(event) => handleProtectedNav(event, "/profile", "profile")}
           >
             <i className="fas fa-user text-2xl"></i>
           </Link>
-          <Link to="/cart" onClick={() => setMenuOpen(false)}>
+          <Link to="/cart" onClick={(event) => handleProtectedNav(event, "/cart", "cart")}>
             <button className="cart-btn">
               <i className="fas fa-shopping-cart"></i> <span>Cart</span>
             </button>

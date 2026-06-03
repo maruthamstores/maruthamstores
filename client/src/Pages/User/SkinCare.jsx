@@ -7,6 +7,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "toastify-js/src/toastify.css";
 import ProductCard from "./ProductCard";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -36,11 +37,56 @@ const ProductCardSkeleton = () => (
   </div>
 );
 const SkinCare = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [wishlist, setWishlist] = useState([]);
   const [cart, setCart] = useState([]);
   const [toggling, setToggling] = useState({ wishlist: {}, cart: {} });
+
+  const showLoginPromptToast = useCallback((type = "wishlist") => {
+    const toastNode = document.createElement("div");
+    toastNode.className = "flex flex-col gap-2 text-sm";
+
+    const message = document.createElement("span");
+    message.textContent = `You're not logged in. Can't manage ${type}. Login now?`;
+
+    const actions = document.createElement("div");
+    actions.className = "flex justify-center gap-2";
+
+    const yesButton = document.createElement("button");
+    yesButton.textContent = "Yes";
+    yesButton.className = "rounded bg-white px-3 py-1 font-semibold text-red-600";
+
+    const noButton = document.createElement("button");
+    noButton.textContent = "No";
+    noButton.className = "rounded border border-white px-3 py-1 font-semibold text-white";
+
+    actions.appendChild(yesButton);
+    actions.appendChild(noButton);
+    toastNode.appendChild(message);
+    toastNode.appendChild(actions);
+
+    const toast = Toastify({
+      node: toastNode,
+      duration: -1,
+      gravity: "bottom",
+      position: "center",
+      backgroundColor: "#dc2626",
+      close: false,
+    });
+
+    yesButton.onclick = () => {
+      toast.hideToast();
+      navigate("/login");
+    };
+
+    noButton.onclick = () => {
+      toast.hideToast();
+    };
+
+    toast.showToast();
+  }, [navigate]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -161,14 +207,18 @@ const SkinCare = () => {
       } catch (err) {
         console.error("Wishlist error:", err);
         setWishlist(wishlist); // Revert optimistic update
-        Toastify({
-          text: "Please login to manage wishlist",
-          duration: 2000,
-          gravity: "bottom",
-          position: "center",
-          backgroundColor: "#dc2626",
-          className: "toastify-mobile",
-        }).showToast();
+        if (err.response?.status === 401) {
+          showLoginPromptToast("wishlist");
+        } else {
+          Toastify({
+            text: "Failed to manage wishlist",
+            duration: 2000,
+            gravity: "bottom",
+            position: "center",
+            backgroundColor: "#dc2626",
+            className: "toastify-mobile",
+          }).showToast();
+        }
       } finally {
         setToggling((prev) => ({
           ...prev,
@@ -176,7 +226,7 @@ const SkinCare = () => {
         }));
       }
     }, 300),
-    [wishlist]
+    [wishlist, showLoginPromptToast]
   );
 
   const toggleCart = useCallback(
