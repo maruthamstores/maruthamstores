@@ -9,6 +9,9 @@ import "toastify-js/src/toastify.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+const getProduct = (item) =>
+  item?.product && typeof item.product === "object" ? item.product : null;
+
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -60,8 +63,9 @@ const Cart = () => {
   }, [navigate]);
 
   const updateQty = async (productId, delta) => {
-    const item = cartItems.find((i) => i.product._id === productId);
-    if (!item || item.product.stock === 0) {
+    const item = cartItems.find((i) => getProduct(i)?._id === productId);
+    const product = getProduct(item);
+    if (!item || !product || product.stock === 0) {
       Toastify({
         text: "Cannot update quantity for out-of-stock product",
         duration: 2000,
@@ -73,7 +77,7 @@ const Cart = () => {
     }
 
     const newQty = item.quantity + delta;
-    if (newQty < 1 || newQty > item.product.stock) {
+    if (newQty < 1 || newQty > product.stock) {
       Toastify({
         text: newQty < 1 ? "Quantity cannot be less than 1" : "Quantity exceeds available stock",
         duration: 2000,
@@ -88,7 +92,7 @@ const Cart = () => {
     const prevCartItems = [...cartItems]; // Store previous state for rollback
     setCartItems((prev) =>
       prev.map((i) =>
-        i.product._id === productId ? { ...i, quantity: newQty } : i
+        getProduct(i)?._id === productId ? { ...i, quantity: newQty } : i
       )
     );
     setUpdatingQty((prev) => ({ ...prev, [productId]: true }));
@@ -128,7 +132,7 @@ const Cart = () => {
       await axios.delete(`${API_URL}/api/cart/${productId}`, {
         withCredentials: true,
       });
-      setCartItems((prev) => prev.filter((i) => i.product._id !== productId));
+      setCartItems((prev) => prev.filter((i) => getProduct(i)?._id !== productId));
       Toastify({
         text: "Item removed from cart",
         duration: 2000,
@@ -163,7 +167,7 @@ const Cart = () => {
       return;
     }
 
-    const inStockItems = cartItems.filter((item) => item.product.stock > 0);
+    const inStockItems = cartItems.filter((item) => getProduct(item)?.stock > 0);
     if (inStockItems.length === 0) {
       Toastify({
         text: "No available items to checkout",
@@ -177,14 +181,8 @@ const Cart = () => {
 
     setCheckoutLoading(true);
     try {
-      const ordersRes = await axios.get(`${API_URL}/api/orders/user`, {
-        withCredentials: true,
-      });
-      const orders = ordersRes.data.data || [];
-      const isFirstOrder = orders.length === 0;
-
       const subtotal = inStockItems.reduce(
-        (sum, item) => sum + item.product.new_price * item.quantity,
+        (sum, item) => sum + getProduct(item).new_price * item.quantity,
         0
       );
 
@@ -233,9 +231,12 @@ const Cart = () => {
   if (loading) return <p className="text-center py-6">Loading cart...</p>;
   if (cartItems.length === 0) return <EmptyCart />;
 
-  const inStockItems = cartItems.filter((item) => item.product.stock > 0);
+  const visibleCartItems = cartItems.filter((item) => getProduct(item));
+  if (visibleCartItems.length === 0) return <EmptyCart />;
+
+  const inStockItems = visibleCartItems.filter((item) => getProduct(item).stock > 0);
   const subtotal = inStockItems.reduce(
-    (sum, item) => sum + item.product.new_price * item.quantity,
+    (sum, item) => sum + getProduct(item).new_price * item.quantity,
     0
   );
 
@@ -247,20 +248,23 @@ const Cart = () => {
       </h1>
 
       <div className="cart-items">
-        {cartItems.map((item) => (
+        {visibleCartItems.map((item) => {
+          const product = getProduct(item);
+
+          return (
           <div
-            className={`cart-item ${removingItemId === item.product._id ? "removing" : item.product.stock === 0 ? "out-of-stock" : ""
+            className={`cart-item ${removingItemId === product._id ? "removing" : product.stock === 0 ? "out-of-stock" : ""
               }`}
-            key={item.product._id}
+            key={product._id}
           >
             <div className="item-info">
               <img
-                src={item.product.images?.[0]?.url || "/placeholder.png"}
-                alt={item.product.name}
-                className={item.product.stock === 0 ? "grayscale" : ""}
+                src={product.images?.[0]?.url || "/placeholder.png"}
+                alt={product.name}
+                className={product.stock === 0 ? "grayscale" : ""}
               />
               <div className="item-details">
-                <span>{item.product.name}</span>
+                <span>{product.name}</span>
                 <span className="item-price font-semibold">
                   {item.product.old_price && (
                     <small className="line-through">₹{item.product.old_price}</small>
@@ -303,7 +307,8 @@ const Cart = () => {
               </button>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="summary-card">
