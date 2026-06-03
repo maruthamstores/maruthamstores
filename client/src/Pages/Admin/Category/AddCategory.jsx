@@ -20,9 +20,6 @@ const AddCategory = () => {
       if (image) formData.append("image", image); // optional
 
       const res = await axios.post(`${API_URL}/api/categories`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
         withCredentials: true, // if your backend needs cookies/auth
       });
 

@@ -35,9 +35,7 @@ const EditCategory = () => {
     if (image) formData.append("image", image);
 
     try {
-      await axios.put(`${API_URL}/api/categories/${id}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      await axios.put(`${API_URL}/api/categories/${id}`, formData);
       navigate("/admin/categories");
     } catch (err) {
       console.error("Failed to update category:", err);

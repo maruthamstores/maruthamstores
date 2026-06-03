@@ -101,7 +101,6 @@ const EditReelsSection = () => {
         `https://api.cloudinary.com/v1_1/${cloudName}/video/upload`,
         formData,
         {
-          headers: { "Content-Type": "multipart/form-data" },
           onUploadProgress: (progressEvent) => {
             const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
             const temp = [...reels];

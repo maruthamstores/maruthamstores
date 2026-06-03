@@ -46,9 +46,9 @@ const appRoutes = (app) => {
   // -------------------- PRODUCT ROUTES --------------------
   app.get('/api/products', productController.getProducts);
   app.get("/api/products/:id", productController.getProductById);
-  app.post('/api/products', productUpload.array('images', 4), productController.createProduct);
-  app.put('/api/products/:id', productUpload.array('images', 4), productController.updateProduct);
-  app.delete('/api/products/:id', productController.deleteProduct);
+  app.post('/api/products', isAdmin, productUpload.array('images', 4), productController.createProduct);
+  app.put('/api/products/:id', isAdmin, productUpload.array('images', 4), productController.updateProduct);
+  app.delete('/api/products/:id', isAdmin, productController.deleteProduct);
 
   // -------------------- REEL ROUTES --------------------
   app.get('/api/reels/signature', reelController.getSignature);

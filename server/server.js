@@ -67,7 +67,12 @@ app.get("/", (req, res) => res.json({ message: "Backend running!" }));
 // ------------------- Error Handling -------------------
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ error: "Internal server error" });
+  
+  if (err.name === 'ValidationError') {
+    return res.status(400).json({ error: "Validation Error", message: err.message });
+  }
+
+  res.status(500).json({ error: "Internal server error", message: err.message });
 });
 
 // ------------------- DB Connect -------------------

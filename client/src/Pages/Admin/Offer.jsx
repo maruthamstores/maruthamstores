@@ -122,7 +122,6 @@ const Offers = () => {
 
       const response = await axios.post(`${API_URL}/api/offers`, formData, {
         withCredentials: true,
-        headers: { "Content-Type": "multipart/form-data" },
       });
 
       setOffers([response.data, ...offers]); // Prepend new offer to show it first

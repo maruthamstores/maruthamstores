@@ -80,13 +80,14 @@ const EditProduct = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     setIsSubmitting(true);
+    setError("");
 
     try {
       const formData = new FormData();
       formData.append("name", name);
-      formData.append("description", description); // Append description
+      formData.append("description", description);
       formData.append("category", category);
       formData.append("new_price", newprice);
       formData.append("old_price", oldprice);
@@ -95,16 +96,15 @@ const EditProduct = () => {
       formData.append("is_bestsell", bestsell);
       formData.append("is_active", status === "Active");
 
-      // Append existing images as JSON
+      // Append existing images as JSON strings
       currentImages.forEach(imgObj =>
-        formData.append("currentImages", JSON.stringify({ url: imgObj.url, public_id: imgObj.public_id || null }))
+        formData.append("currentImages", JSON.stringify({ url: imgObj.url, public_id: imgObj.public_id || imgObj.url }))
       );
 
-      // Append new images
+      // Append new image files
       newImages.forEach(file => formData.append("images", file));
 
       await axios.put(`${API_URL}/api/products/${id}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
 
@@ -112,7 +112,8 @@ const EditProduct = () => {
       navigate("/admin/products");
     } catch (err) {
       console.error(err);
-      alert("Failed to update product.");
+      const msg = err?.response?.data?.message || err?.response?.data?.error || "Failed to update product. Please try again.";
+      setError(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -150,11 +151,10 @@ const EditProduct = () => {
 
           {/* Description */}
           <div>
-            <label className="block text-base font-medium text-gray-700 mb-2">Description *</label>
+            <label className="block text-base font-medium text-gray-700 mb-2">Description</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              required
               rows={4}
               className="block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-base"
               placeholder="Enter product description"
@@ -304,8 +304,15 @@ const EditProduct = () => {
 
         {/* Right-side floating buttons */}
         <div className="w-full lg:w-64 mt-6 lg:mt-0 lg:ml-6 flex flex-col space-y-3 sticky top-8">
+          {/* Error display */}
+          {error && (
+            <div className="p-3 bg-red-50 text-red-600 rounded-md text-sm border border-red-200">
+              ⚠️ {error}
+            </div>
+          )}
+
           <button
-            type="submit"
+            type="button"
             disabled={isSubmitting}
             className={`w-full flex justify-center py-3 px-4 rounded-md text-white bg-green-600 hover:bg-green-700 text-base font-medium shadow ${isSubmitting ? "opacity-70 cursor-not-allowed" : ""}`}
             onClick={handleSubmit}
