@@ -36,11 +36,9 @@ const ProductCard = React.memo(
               {product.name}
             </Link>
           </h4>
-          {product.offer_line && (
-            <div className="text-green-600 font-semibold text-xs sm:text-sm mb-2">
-              {product.offer_line}% Launch Offer
-            </div>
-          )}
+         <div className="text-green-600 font-semibold text-xs sm:text-sm mb-2">
+  {(product.offer_line || 0)}% Launch Offer
+</div>
           <p className="text-xs sm:text-sm text-gray-700 mb-1 sm:mb-2 overflow-hidden line-clamp-1">
             {product.description}
           </p>

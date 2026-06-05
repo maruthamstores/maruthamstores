@@ -33,7 +33,7 @@ const Footer = () => {
             <a href="https://www.instagram.com/_maruthamstores_?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" className="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center bg-gray-800 rounded hover:bg-gray-600">
               <FaInstagram />
             </a>
-            <a href="https://wa.me/9750530288?text=Hello%20I%20want%20to%20know%20more
+            <a href="https://wa.me/9150015901?text=Hello%20I%20want%20to%20know%20more
 " className="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center bg-gray-800 rounded hover:bg-gray-600">
               <FaWhatsapp />
             </a>

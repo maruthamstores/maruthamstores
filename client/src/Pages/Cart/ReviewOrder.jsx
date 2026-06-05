@@ -202,7 +202,7 @@ const ReviewOrder = () => {
       });
       message += `\nSubtotal: ₹${subtotal}\nShipping: ₹${shipping}\nTotal: ₹${total}\nPayment: UPI`;
 
-      const whatsappNumber = "919750530288";
+      const whatsappNumber = "9150015901";
       window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, "_blank");
 
       Toastify({

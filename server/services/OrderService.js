@@ -1,6 +1,8 @@
 const Order = require("../models/order");
 const Product = require("../models/product");
 const Counter = require("../models/counter");
+const User = require("../models/User");
+const { sendUserOrderEmail, sendAdminOrderEmail } = require("./EmailService");
 
 // Create new order with sequential code
 const createOrder = async (userId, orderData) => {
@@ -40,7 +42,25 @@ const createOrder = async (userId, orderData) => {
     items: orderData.items,
   });
 
-  return await order.save();
+  const savedOrder = await order.save();
+
+  // ─── Send email notifications (non-blocking) ──────────────────────────────
+  try {
+    const user = await User.findById(userId).select("name email");
+    if (user) {
+      // Populate product names for email
+      const populated = await Order.findById(savedOrder._id).populate("items.product", "name");
+      await Promise.all([
+        sendUserOrderEmail(populated, user.email, user.name),
+        sendAdminOrderEmail(populated, user.email, user.name),
+      ]);
+    }
+  } catch (mailErr) {
+    console.error("[EmailService] Failed to send order emails:", mailErr.message);
+    // Do NOT throw — order is already saved, email failure shouldn't break the flow
+  }
+
+  return savedOrder;
 };
 // Get orders of a user
 const getUserOrders = async (userId) => {

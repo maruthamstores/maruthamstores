@@ -178,10 +178,10 @@ const Help = () => {
       <footer className="bg-gray-900 text-gray-300 py-16 text-center">
         <h4 className="text-white text-xl mb-2">Contact Us</h4>
         <p>Email: Maruthamstoresinternational@gmail.com</p>
-        <p>Phone: +91 90036 89821</p>
+        <p>Phone: +91 9150015901</p>
         <p>Address: 202, Bhavani Main Road, Vaikalamedu, Chithode, Erode - 638102, Tamil Nadu</p>
         <p>Working Hours: Mon - Sat (10 AM – 7 PM)</p>
-        <a href="https://wa.me/919003689821" target="_blank" rel="noopener noreferrer" className="text-green-600 font-semibold">Chat on WhatsApp</a>
+        <a href="https://wa.me/9150015901" target="_blank" rel="noopener noreferrer" className="text-green-600 font-semibold">Chat on WhatsApp</a>
       </footer>
     </div>
   );
