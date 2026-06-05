@@ -112,10 +112,10 @@ const sendUserOrderEmail = async (order, userEmail, userName) => {
 
   const content = `
     <h2 style="margin:0 0 6px;color:#2d2010;font-size:22px;">
-      Thank you for your order, ${userName}! 🎉
+      Thank you for your order, ${userName}!
     </h2>
-    <p style="margin:0 0 24px;color:#6b5030;font-size:15px;">
-      Your order has been placed successfully. We'll notify you once it's shipped.
+    <p style="margin:0 0 24px;color:#6b5030;font-size:18px;">
+      Your order has been placed successfully. it delevier within 7 working days. 
     </p>
 
     <!-- Order Info -->
@@ -126,30 +126,6 @@ const sendUserOrderEmail = async (order, userEmail, userName) => {
           <td style="color:#7a5c2e;font-size:13px;padding-bottom:8px;">Order ID</td>
           <td style="color:#2d2010;font-size:13px;font-weight:600;
                      text-align:right;padding-bottom:8px;">#${order.code}</td>
-        </tr>
-        <tr>
-          <td style="color:#7a5c2e;font-size:13px;padding-bottom:8px;">Payment Method</td>
-          <td style="color:#2d2010;font-size:13px;font-weight:600;
-                     text-align:right;padding-bottom:8px;">${order.payment_method}</td>
-        </tr>
-        <tr>
-          <td style="color:#7a5c2e;font-size:13px;padding-bottom:8px;">Payment Status</td>
-          <td style="text-align:right;padding-bottom:8px;">
-            <span style="background:${order.is_paid ? "#d4edda" : "#fff3cd"};
-                         color:${order.is_paid ? "#155724" : "#856404"};
-                         padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600;">
-              ${order.is_paid ? "Paid" : "Pending"}
-            </span>
-          </td>
-        </tr>
-        <tr>
-          <td style="color:#7a5c2e;font-size:13px;">Order Status</td>
-          <td style="text-align:right;">
-            <span style="background:#d1ecf1;color:#0c5460;
-                         padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600;">
-              ${order.status}
-            </span>
-          </td>
         </tr>
       </table>
     </div>
