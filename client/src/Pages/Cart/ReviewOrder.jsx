@@ -167,6 +167,10 @@ const ReviewOrder = () => {
       return;
     }
 
+    // ✅ Open WhatsApp window BEFORE async calls to preserve user-gesture context
+    // (browsers block window.open() called after await as a popup)
+    const whatsappWindow = window.open("", "_blank");
+
     try {
       const subtotal = validItems.reduce((sum, item) => sum + item.product.new_price * item.quantity, 0);
       const total = subtotal + shipping;
@@ -196,14 +200,22 @@ const ReviewOrder = () => {
         await axios.delete(`${API_URL}/api/cart/clear`, { withCredentials: true });
       }
 
+      // Build WhatsApp message
       let message = `*New Order Placed!*\n\nName: ${name}\nPhone: ${phone}\nAddress: ${addr}, ${city}, ${state} - ${pincode}\n\nItems:\n`;
       validItems.forEach((item, idx) => {
         message += `${idx + 1}.${item.product.name} - Qty: ${item.quantity} - ₹${item.product.new_price}\n`;
       });
       message += `\nSubtotal: ₹${subtotal}\nShipping: ₹${shipping}\nTotal: ₹${total}\nPayment: UPI`;
 
+      // ✅ Navigate the already-open window to WhatsApp URL
       const whatsappNumber = "9150015901";
-      window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, "_blank");
+      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+      if (whatsappWindow && !whatsappWindow.closed) {
+        whatsappWindow.location.href = whatsappUrl;
+      } else {
+        // Fallback: try window.open again (in case it was blocked)
+        window.open(whatsappUrl, "_blank");
+      }
 
       Toastify({
         text: "Order placed successfully ✅",
@@ -215,6 +227,10 @@ const ReviewOrder = () => {
 
       navigate("/", { replace: true });
     } catch (err) {
+      // Close the blank WhatsApp window if order failed
+      if (whatsappWindow && !whatsappWindow.closed) {
+        whatsappWindow.close();
+      }
       console.error("Error placing order:", err);
       Toastify({
         text: err.response?.data?.message || "Failed to place order",
